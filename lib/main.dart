@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
 
 TextEditingController urlText = new TextEditingController();
 TextEditingController numColsText = new TextEditingController();
+TextEditingController numNeighText = new TextEditingController();
 
 Map requestBody = new Map();
 
@@ -32,6 +33,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isUrlValid = true;
   bool isColsValid = true;
+  bool isNeighValid = true;
   int correctPredictions = 0;
   int totalPredictions = 0;
   double accuracy = 0.0;
@@ -92,17 +94,29 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Divider(),
+          TextField(
+            controller: numNeighText,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Escribe el número de vecinos cercanos',
+              hintText: 'Número K de vecinos cercanos',
+              errorText: isNeighValid ? null : 'Por favor, introduce el número de vecinos',
+            ),
+          ),
+          Divider(),
           Center(
             child: ElevatedButton(
               onPressed: () async {
                 setState(() {
                     urlText.text.isNotEmpty ? isUrlValid = true : isUrlValid = false;
                     numColsText.text.isNotEmpty ? isColsValid = true : isColsValid = false;
+                    numNeighText.text.isNotEmpty ? isNeighValid = true : isNeighValid = false;
                   });
-                if (isUrlValid && isColsValid) { 
+                if (isUrlValid && isColsValid && isNeighValid) { 
                   requestBody = {
                             'url': urlText.text.toString(),
                             'cols': int.parse(numColsText.text.toString()),
+                            'neighbors': int.parse(numNeighText.text.toString()),
                         };
                   var body = json.encode(requestBody); 
                   http.Response response = await http.post(Uri.parse("http://localhost:8000/request"), body: body);
